@@ -1,0 +1,242 @@
+<main class="min-h-screen overflow-hidden bg-[#f8f7f3] text-[#202622]">
+  <header class="relative z-20 border-b border-black/5 bg-[#f8f7f3]/90 backdrop-blur-xl">
+    <div class="mx-auto flex h-20 max-w-7xl items-center justify-between px-5 lg:px-8">
+      <button (click)="scrollTo('top')" class="flex items-center gap-2.5" aria-label="На главную">
+        <span class="flex size-9 items-center justify-center rounded-xl bg-[#416d61] text-white"><app-icon name="spark" /></span>
+        <span class="text-xl font-bold tracking-[-0.04em]">Рядом</span>
+      </button>
+      <nav class="hidden items-center gap-8 text-sm font-medium text-[#5d655f] md:flex">
+        @for (item of menuItems; track item.id) {
+          <button (click)="scrollTo(item.id)" class="transition hover:text-[#202622]">{{ item.label }}</button>
+        }
+      </nav>
+      <div class="hidden items-center gap-3 md:flex">
+        <button (click)="navigateAccount()" class="rounded-full px-5 py-2.5 text-sm font-semibold transition hover:bg-black/5">Личный кабинет</button>
+        <button (click)="scrollTo('specialists')" class="rounded-full bg-[#202622] px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-[#416d61]">Подобрать психолога</button>
+      </div>
+      <button (click)="mobileOpen = !mobileOpen" class="rounded-full bg-white p-2.5 shadow-sm md:hidden" [attr.aria-label]="mobileOpen ? 'Закрыть меню' : 'Открыть меню'">
+        <app-icon [name]="mobileOpen ? 'x' : 'menu'" />
+      </button>
+    </div>
+    @if (mobileOpen) {
+      <nav class="absolute left-4 right-4 top-20 rounded-3xl bg-white p-5 shadow-xl md:hidden">
+        @for (item of menuItems; track item.id) {
+          <button (click)="scrollTo(item.id)" class="block w-full border-b border-black/5 py-3 text-left font-semibold last:border-0">{{ item.label }}</button>
+        }
+        <button (click)="navigateAccount()" class="mt-3 w-full rounded-full bg-[#202622] px-5 py-3 text-sm font-bold text-white">Личный кабинет</button>
+      </nav>
+    }
+  </header>
+
+  <section id="top" class="relative">
+    <div class="pointer-events-none absolute -right-40 top-5 size-[34rem] rounded-full bg-[#dcece6] blur-3xl"></div>
+    <div class="pointer-events-none absolute -left-40 bottom-0 size-80 rounded-full bg-[#eee3d7] blur-3xl"></div>
+    <div class="relative mx-auto grid max-w-7xl gap-12 px-5 py-16 lg:grid-cols-[1.08fr_.92fr] lg:px-8 lg:py-24">
+      <div class="flex flex-col justify-center">
+        <div class="mb-7 flex w-fit items-center gap-2 rounded-full border border-[#416d61]/20 bg-white/60 px-4 py-2 text-xs font-bold uppercase tracking-[0.12em] text-[#416d61]">
+          <span class="size-2 rounded-full bg-[#70a393]"></span> Бережно и конфиденциально
+        </div>
+        <h1 class="max-w-3xl text-[3.35rem] font-semibold leading-[0.98] tracking-[-0.065em] sm:text-7xl">
+          Понять себя —<br><span class="font-serif italic text-[#416d61]">уже половина пути</span>
+        </h1>
+        <p class="mt-7 max-w-xl text-lg leading-8 text-[#646b66]">Пройдите научно обоснованные тесты, получите понятные рекомендации и найдите психолога, который подходит именно вам.</p>
+        <div class="mt-9 flex flex-col gap-3 sm:flex-row">
+          <button (click)="startQuiz()" class="group flex items-center justify-center gap-3 rounded-full bg-[#416d61] px-7 py-4 font-bold text-white shadow-[0_12px_30px_rgba(65,109,97,.22)] transition hover:-translate-y-0.5 hover:bg-[#355c52]">
+            Пройти экспресс-тест <app-icon name="arrow" className="size-5 transition group-hover:translate-x-1" />
+          </button>
+          <button (click)="scrollTo('specialists')" class="flex items-center justify-center gap-2 rounded-full border border-black/10 bg-white/70 px-7 py-4 font-bold transition hover:bg-white">Найти специалиста</button>
+        </div>
+        <div class="mt-10 flex flex-wrap gap-x-7 gap-y-3 text-sm text-[#686f6a]">
+          <span class="flex items-center gap-2"><app-icon name="check" className="size-4 text-[#416d61]" /> Анонимно</span>
+          <span class="flex items-center gap-2"><app-icon name="check" className="size-4 text-[#416d61]" /> 5–10 минут</span>
+          <span class="flex items-center gap-2"><app-icon name="check" className="size-4 text-[#416d61]" /> Результат сразу</span>
+        </div>
+      </div>
+      <div class="relative flex items-center justify-center lg:justify-end">
+        <div class="absolute left-0 top-10 hidden rounded-2xl bg-white p-4 shadow-[0_18px_60px_rgba(42,51,46,.12)] lg:block">
+          <div class="flex items-center gap-3">
+            <span class="flex size-10 items-center justify-center rounded-full bg-[#e1f1eb] text-[#416d61]"><app-icon name="shield" /></span>
+            <div><p class="text-sm font-bold">Данные защищены</p><p class="text-xs text-[#858b87]">Никому не передаём</p></div>
+          </div>
+        </div>
+        <div class="w-full max-w-lg rotate-1 rounded-[2.5rem] bg-[#d8e7e1] p-5 shadow-[0_28px_80px_rgba(44,71,63,.16)] sm:p-8">
+          <div class="-rotate-1 rounded-[2rem] bg-white p-6 sm:p-8">
+            <div class="flex items-center justify-between">
+              <span class="rounded-full bg-[#edf4f1] px-3 py-1.5 text-xs font-bold text-[#416d61]">Экспресс-оценка</span>
+              <span class="text-xs font-semibold text-[#989e9a]">2 из 5</span>
+            </div>
+            <div class="mt-5 h-1.5 overflow-hidden rounded-full bg-[#edf0ed]"><div class="h-full w-2/5 rounded-full bg-[#70a393]"></div></div>
+            <p class="mt-8 text-2xl font-semibold leading-tight tracking-[-0.035em]">Как часто в последнее время вам было трудно расслабиться?</p>
+            <div class="mt-7 space-y-3">
+              @for (label of ['Почти никогда', 'Иногда', 'Часто']; track label; let i = $index) {
+                <button (click)="startQuiz()" class="flex w-full items-center justify-between rounded-2xl border p-4 text-left text-sm font-semibold transition hover:border-[#70a393]" [ngClass]="i === 1 ? 'border-[#70a393] bg-[#f1f7f5]' : 'border-black/7'">
+                  {{ label }}<span class="size-4 rounded-full border" [ngClass]="i === 1 ? 'border-4 border-[#70a393]' : 'border-black/20'"></span>
+                </button>
+              }
+            </div>
+            <p class="mt-6 flex items-start gap-2 text-xs leading-5 text-[#929894]"><app-icon name="shield" className="mt-0.5 size-4 shrink-0" /> Ответы сохраняются только на вашем устройстве</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="tests" class="bg-white py-20">
+    <div class="mx-auto max-w-7xl px-5 lg:px-8">
+      <div class="flex flex-col justify-between gap-5 sm:flex-row sm:items-end">
+        <div><p class="eyebrow">Начните с малого</p><h2 class="section-title">Что вас беспокоит?</h2></div>
+        <button (click)="navigateAccount()" class="flex items-center gap-2 text-sm font-bold text-[#416d61]">Все тесты <app-icon name="arrow" /></button>
+      </div>
+      <div class="mt-10 grid gap-5 md:grid-cols-3">
+        @for (test of tests; track test.title) {
+          <button (click)="startQuiz()" class="group rounded-[1.75rem] border border-black/7 bg-[#fbfbf9] p-6 text-left transition duration-300 hover:-translate-y-1 hover:border-transparent hover:shadow-[0_20px_60px_rgba(38,48,42,.1)]">
+            <span class="flex size-12 items-center justify-center rounded-2xl" [class]="'flex size-12 items-center justify-center rounded-2xl ' + test.color"><app-icon [name]="test.icon" /></span>
+            <h3 class="mt-7 text-xl font-bold tracking-[-0.03em]">{{test.title}}</h3>
+            <div class="mt-3 flex gap-4 text-sm text-[#858b87]"><span>{{test.count}}</span><span>·</span><span>{{test.time}}</span></div>
+            <div class="mt-8 flex items-center justify-between border-t border-black/7 pt-5 text-sm font-bold">
+              Пройти бесплатно <span class="flex size-9 items-center justify-center rounded-full bg-white transition group-hover:bg-[#416d61] group-hover:text-white"><app-icon name="arrow" className="size-4" /></span>
+            </div>
+          </button>
+        }
+      </div>
+      <div class="mt-6 rounded-[1.75rem] bg-[#f2ede7] px-6 py-5 md:flex md:items-center md:justify-between">
+        <div class="flex items-center gap-4"><span class="flex size-11 shrink-0 items-center justify-center rounded-full bg-white text-[#8f715c]"><app-icon name="shield" /></span><p class="text-sm leading-6 text-[#655f59]"><strong class="text-[#282521]">Важно:</strong> результаты тестов не являются диагнозом. Они помогают обратить внимание на самочувствие и выбрать следующий шаг.</p></div>
+        <button (click)="scrollTo('trust')" class="mt-3 whitespace-nowrap text-sm font-bold text-[#6d5645] md:ml-6 md:mt-0">Подробнее</button>
+      </div>
+    </div>
+  </section>
+
+  <section id="specialists" class="py-20">
+    <div class="mx-auto max-w-7xl px-5 lg:px-8">
+      <div class="text-center"><p class="eyebrow">Проверенные специалисты</p><h2 class="section-title mx-auto max-w-2xl">Тот самый человек, с которым станет легче</h2><p class="mx-auto mt-4 max-w-xl leading-7 text-[#777e79]">Подбираем психологов по вашему запросу, подходу и комфортной стоимости консультации.</p></div>
+      <div class="mt-11 grid gap-6 md:grid-cols-3">
+        @for (person of specialists; track person.name) {
+          <article class="overflow-hidden rounded-[1.9rem] bg-white shadow-[0_12px_45px_rgba(42,50,45,.07)]">
+            <div class="relative h-64 overflow-hidden bg-[#e7e7e3]">
+              <img [src]="person.image" [alt]="person.name + ', ' + person.role" loading="lazy" class="h-full w-full object-cover object-center transition duration-500 hover:scale-105" />
+              <span class="absolute left-4 top-4 flex items-center gap-1.5 rounded-full bg-white/90 px-3 py-1.5 text-xs font-bold backdrop-blur"><span class="size-2 rounded-full bg-[#5e9f7d]"></span> Онлайн</span>
+              <span class="absolute right-4 top-4 flex items-center gap-1 rounded-full bg-white/90 px-3 py-1.5 text-xs font-bold backdrop-blur"><app-icon name="star" className="size-3.5 fill-[#e2b44d] text-[#e2b44d]" /> {{person.rating}}</span>
+            </div>
+            <div class="p-6">
+              <h3 class="text-xl font-bold tracking-[-0.03em]">{{person.name}}</h3>
+              <p class="mt-1 text-sm text-[#777e79]">{{person.role}}</p>
+              <p class="mt-5 text-sm font-semibold text-[#416d61]">{{person.themes}}</p>
+              <div class="mt-5 flex items-center justify-between border-t border-black/7 pt-5">
+                <div><p class="text-xs text-[#969c98]">{{person.experience}}</p><p class="mt-1 font-bold">{{person.price}} <span class="text-xs font-normal text-[#969c98]">/ 50 мин</span></p></div>
+                <button (click)="openBooking(person.name)" class="rounded-full bg-[#202622] px-5 py-3 text-sm font-bold text-white transition hover:bg-[#416d61]">Записаться</button>
+              </div>
+            </div>
+          </article>
+        }
+      </div>
+    </div>
+  </section>
+
+  <section id="how" class="bg-[#29483f] py-20 text-white">
+    <div class="mx-auto grid max-w-7xl gap-12 px-5 lg:grid-cols-[.85fr_1.15fr] lg:px-8">
+      <div><p class="text-xs font-bold uppercase tracking-[0.16em] text-[#a8c8be]">Всё просто</p><h2 class="mt-3 max-w-md text-4xl font-semibold leading-tight tracking-[-0.045em] sm:text-5xl">Путь к поддержке в три шага</h2><p class="mt-5 max-w-md leading-7 text-white/65">Без сложных анкет и случайного выбора. Мы объясним результат и поможем двигаться дальше.</p></div>
+      <div class="grid gap-px overflow-hidden rounded-[1.75rem] bg-white/10 sm:grid-cols-3">
+        @for (step of steps; track step.number) {
+          <div class="bg-[#315349] p-7"><span class="font-serif text-3xl italic text-[#a8c8be]">{{step.number}}</span><h3 class="mt-10 text-lg font-bold">{{step.title}}</h3><p class="mt-3 text-sm leading-6 text-white/60">{{step.description}}</p></div>
+        }
+      </div>
+    </div>
+  </section>
+
+  <section id="trust" class="bg-white py-20">
+    <div class="mx-auto max-w-6xl px-5 lg:px-8">
+      <div class="grid items-center gap-12 rounded-[2.5rem] bg-[#f3efe9] p-7 md:grid-cols-[.9fr_1.1fr] md:p-12">
+        <div class="relative mx-auto flex aspect-square w-full max-w-sm items-center justify-center rounded-full bg-[#dbe9e4]">
+          <span class="absolute size-2/3 rounded-full border border-[#416d61]/15"></span><span class="absolute size-1/2 rounded-full border border-[#416d61]/20"></span>
+          <app-icon name="brain" className="size-24 text-[#416d61]" />
+          <div class="absolute bottom-8 right-4 rounded-2xl bg-white px-4 py-3 shadow-lg"><p class="text-xs text-[#888e89]">Уже доверяют</p><p class="mt-1 text-lg font-bold">12 400+ человек</p></div>
+        </div>
+        <div>
+          <app-icon name="quote" className="size-9 text-[#a7856c]" />
+          <blockquote class="mt-5 text-2xl font-medium leading-relaxed tracking-[-0.025em] sm:text-3xl">«Мы создали “Рядом”, чтобы разговор о ментальном здоровье начинался не со страха, а с понимания и заботы о себе».</blockquote>
+          <p class="mt-6 text-sm font-bold">Команда психологов сервиса</p>
+          <div class="mt-8 grid gap-3 sm:grid-cols-2">
+            <p class="flex items-center gap-2 text-sm text-[#666d68]"><app-icon name="check" className="size-4 text-[#416d61]" /> Дипломы специалистов проверены</p>
+            <p class="flex items-center gap-2 text-sm text-[#666d68]"><app-icon name="check" className="size-4 text-[#416d61]" /> Методики с научной базой</p>
+            <p class="flex items-center gap-2 text-sm text-[#666d68]"><app-icon name="check" className="size-4 text-[#416d61]" /> Безопасное хранение данных</p>
+            <p class="flex items-center gap-2 text-sm text-[#666d68]"><app-icon name="check" className="size-4 text-[#416d61]" /> Поддержка каждый день</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="bg-[#202622] py-10 text-white">
+    <div class="mx-auto flex max-w-7xl flex-col gap-6 px-5 lg:px-8">
+      <div class="flex flex-col justify-between gap-6 sm:flex-row sm:items-center">
+        <div class="flex items-center gap-2.5"><span class="flex size-9 items-center justify-center rounded-xl bg-[#70a393]"><app-icon name="spark" /></span><span class="text-xl font-bold">Рядом</span></div>
+        <p class="max-w-xl text-sm leading-6 text-white/50">Сервис не оказывает экстренную психологическую помощь. Если вам или близкому угрожает опасность, обратитесь по номеру 112.</p>
+      </div>
+      <div class="flex flex-col justify-between gap-3 border-t border-white/10 pt-6 text-xs text-white/40 sm:flex-row"><p>© 2025 Рядом. Забота о ментальном здоровье.</p><p>Конфиденциальность · Документы · Контакты</p></div>
+    </div>
+  </footer>
+
+  @if (quizOpen) {
+    <div class="fixed inset-0 z-50 flex items-end justify-center bg-[#15201c]/55 p-0 backdrop-blur-sm sm:items-center sm:p-5" role="dialog" aria-modal="true" aria-label="Экспресс-тест">
+      <div class="max-h-[92vh] w-full max-w-xl overflow-y-auto rounded-t-[2rem] bg-white p-6 shadow-2xl sm:rounded-[2rem] sm:p-8">
+        <div class="flex items-center justify-between">
+          <span class="text-sm font-bold text-[#416d61]">{{result ? 'Ваш результат' : 'Вопрос ' + (question + 1) + ' из ' + questions.length}}</span>
+          <button (click)="closeQuiz()" class="rounded-full bg-[#f3f3f0] p-2" aria-label="Закрыть"><app-icon name="x" /></button>
+        </div>
+        @if (!result) {
+          <div class="mt-5 h-1.5 overflow-hidden rounded-full bg-[#edf0ed]"><div class="h-full rounded-full bg-[#70a393] transition-all" [style.width.%]="((question + 1) / questions.length) * 100"></div></div>
+          <h2 class="mt-8 text-2xl font-bold leading-snug tracking-[-0.035em]">{{questions[question]}}</h2>
+          <p class="mt-2 text-sm text-[#858b87]">Выберите ответ, который лучше описывает последние две недели.</p>
+          <div class="mt-7 grid gap-3">
+            @for (label of quizAnswers; track label; let value = $index) {
+              <button (click)="answer(value)" class="flex items-center justify-between rounded-2xl border border-black/8 p-4 text-left font-semibold transition hover:border-[#70a393] hover:bg-[#f2f7f5]">{{label}}<app-icon name="chevron" className="size-4 text-[#9ca29e]" /></button>
+            }
+          </div>
+        } @else {
+          <div class="pt-5">
+            <span class="flex size-16 items-center justify-center rounded-2xl bg-[#e4f0ec] text-[#416d61]"><app-icon [name]="score >= 8 ? 'heart' : 'spark'" className="size-8" /></span>
+            <h2 class="mt-6 text-3xl font-bold tracking-[-0.045em]">{{ score >= 8 ? 'Похоже, вам сейчас непросто' : score >= 4 ? 'Есть признаки напряжения' : 'Ваше состояние выглядит устойчивым' }}</h2>
+            <p class="mt-4 leading-7 text-[#68706a]">{{score >= 8 ? 'Ответы указывают на заметное эмоциональное напряжение. Это не диагноз, но хороший повод не оставаться с переживаниями в одиночку.' : score >= 4 ? 'Попробуйте внимательнее отнестись ко сну и отдыху. Если состояние сохраняется больше двух недель, разговор со специалистом может помочь.' : 'Продолжайте заботиться о режиме сна, отдыхе и контакте с близкими. Возвращайтесь к тесту, если самочувствие изменится.'}}</p>
+            <div class="mt-6 rounded-2xl bg-[#f3efe9] p-5">
+              <p class="text-sm font-bold">Рекомендуем сейчас</p>
+              <ul class="mt-3 space-y-2 text-sm leading-6 text-[#655f59]">
+                <li class="flex gap-2"><app-icon name="check" className="mt-1 size-4 shrink-0 text-[#416d61]" /> Выделить 10 минут на прогулку или спокойное дыхание</li>
+                <li class="flex gap-2"><app-icon name="check" className="mt-1 size-4 shrink-0 text-[#416d61]" /> Обсудить состояние с человеком, которому доверяете</li>
+                @if (score >= 4) { <li class="flex gap-2"><app-icon name="check" className="mt-1 size-4 shrink-0 text-[#416d61]" /> Рассмотреть консультацию психолога</li> }
+              </ul>
+            </div>
+            <div class="mt-6 flex flex-col gap-3 sm:flex-row">
+              <button (click)="quizFindSpecialist()" class="flex flex-1 items-center justify-center gap-2 rounded-full bg-[#416d61] px-5 py-3.5 font-bold text-white">Подобрать психолога <app-icon name="arrow" /></button>
+              <button (click)="startQuiz()" class="rounded-full border border-black/10 px-5 py-3.5 font-bold">Пройти ещё раз</button>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+  }
+
+  @if (booking) {
+    <div class="fixed inset-0 z-50 flex items-end justify-center bg-[#15201c]/55 p-0 backdrop-blur-sm sm:items-center sm:p-5" role="dialog" aria-modal="true" aria-label="Запись к психологу">
+      <div class="w-full max-w-md rounded-t-[2rem] bg-white p-7 text-center shadow-2xl sm:rounded-[2rem]">
+        <button (click)="closeBooking()" class="ml-auto block rounded-full bg-[#f3f3f0] p-2" aria-label="Закрыть"><app-icon name="x" /></button>
+        <span class="mx-auto mt-2 flex size-16 items-center justify-center rounded-2xl bg-[#e4f0ec] text-[#416d61]"><app-icon name="calendar" className="size-8" /></span>
+        @if (!bookingConfirmed) {
+          <h2 class="mt-5 text-2xl font-bold tracking-[-0.035em]">Запись к специалисту</h2>
+          <p class="mt-2 text-[#777e79]">{{booking}}</p>
+          <div class="mt-6 grid grid-cols-3 gap-2">
+            @for (time of bookingTimes; track time) {
+              <button (click)="selectedBookingTime = time" [attr.aria-pressed]="selectedBookingTime === time" [ngClass]="selectedBookingTime === time ? 'border-[#416d61] bg-[#f1f7f5]' : ''" class="rounded-xl border border-black/8 px-2 py-3 text-xs font-bold transition hover:border-[#416d61] hover:bg-[#f1f7f5]">{{time}}</button>
+            }
+          </div>
+          <button (click)="confirmBooking()" [disabled]="!selectedBookingTime" class="mt-5 w-full rounded-full bg-[#416d61] px-6 py-4 font-bold text-white disabled:cursor-not-allowed disabled:opacity-40">Продолжить запись</button>
+          <p class="mt-4 flex items-center justify-center gap-1.5 text-xs text-[#929894]"><app-icon name="video" className="size-4" /> Консультация пройдёт онлайн</p>
+        } @else {
+          <h2 class="mt-5 text-2xl font-bold">Демонстрация записи</h2>
+          <p class="mt-3 leading-7 text-[#777e79]">Вы выбрали: {{booking}} — {{selectedBookingTime}}.</p>
+          <p class="mt-3 text-sm text-[#929894]">Это учебный макет: настоящая запись не создаётся, свободные слоты не проверяются.</p>
+          <button (click)="closeBooking()" class="mt-6 w-full rounded-full bg-[#416d61] px-6 py-4 font-bold text-white">Готово</button>
+        }
+      </div>
+    </div>
+  }
+</main>
