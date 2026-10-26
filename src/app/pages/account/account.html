@@ -114,7 +114,7 @@
           <div>
             <div class="mt-5 flex items-center gap-4"><div class="h-1.5 flex-1 overflow-hidden rounded-full bg-[#e8ece9]"><div class="h-full rounded-full bg-[#70a393] transition-all" [style.width.%]="((testQuestion + 1) / test.questions.length) * 100"></div></div><span class="text-xs font-bold text-[#8c928e]">{{testQuestion + 1}}/{{test.questions.length}}</span></div>
             <p class="mt-7 text-sm text-[#777e79]">Как часто за указанный период...</p>
-            <h2 class="mt-2 text-2xl font-bold leading-snug tracking-[-0.035em]">{{test.questions[testQuestion]}}?</h2>
+            <h2 class="mt-2 text-2xl font-bold leading-snug tracking-[-0.035em]">{{test.questions[testQuestion].text}}?</h2>
             <div class="mt-7 grid gap-3">
               @for (label of answers; track label; let value = $index) {
                 <button (click)="testAnswer(value)" class="flex items-center justify-between rounded-2xl border border-black/8 p-4 text-left font-semibold transition hover:border-[#70a393] hover:bg-[#f1f7f5]">{{label}}<span class="size-4 rounded-full border border-black/20"></span></button>

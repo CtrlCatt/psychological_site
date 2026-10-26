@@ -2,21 +2,23 @@ import { Component, inject, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { assessments, type Assessment } from '../../data/site-data';
 import { ResultsService, type SavedResult } from '../../data/results.service';
+import { AssessmentService } from '../../data/assessment.service';
 import { IconComponent } from '../../shared/icon/icon.component';
 
-@Component({selector: 'app-account', standalone: true, imports: [IconComponent], templateUrl: './account.html'})
+@Component({selector: 'app-account', standalone: true, imports: [IconComponent], providers: [AssessmentService], templateUrl: './account.html'})
 export class Account implements OnInit {
   private readonly router = inject(Router);
   private readonly resultsService = inject(ResultsService);
+  private readonly assessmentService = inject(AssessmentService);
   readonly assessments = assessments;
-  readonly answers = ['Ни разу', 'Несколько дней', 'Больше половины дней', 'Почти каждый день'];
+  readonly answers = this.assessmentService.answers;
   readonly bars = [42, 54, 48, 64, 57, 72, 78];
-  activeTest: Assessment | null = null;
   testStarted = false;
-  testQuestion = 0;
-  testScore = 0;
-  testResult = false;
-  sensitiveAnswer = false;
+  get activeTest(): Assessment | null { return this.assessmentService.activeTest; }
+  get testQuestion(): number { return this.assessmentService.questionIndex; }
+  get testScore(): number { return this.assessmentService.score; }
+  get testResult(): boolean { return this.assessmentService.completed; }
+  get sensitiveAnswer(): boolean { return this.assessmentService.sensitiveAnswer; }
   savedResults: SavedResult[] = [];
   showAll = false;
   helpOpen = false;
@@ -31,26 +33,17 @@ export class Account implements OnInit {
   }
   scrollTo(id: string): void { document.getElementById(id)?.scrollIntoView({behavior:'smooth'}); }
   openTest(test: Assessment): void {
-    this.activeTest = test;
+    this.assessmentService.open(test);
     this.testStarted = false;
-    this.testQuestion = 0;
-    this.testScore = 0;
-    this.testResult = false;
-    this.sensitiveAnswer = false;
   }
   testAnswer(value: number): void {
-    const active = this.activeTest;
-    if (!active) return;
-    if (active.title.includes('PHQ-9') && this.testQuestion === active.questions.length - 1 && value > 0) this.sensitiveAnswer = true;
-    this.testScore += value;
-    if (this.testQuestion === active.questions.length - 1) this.testResult = true;
-    else this.testQuestion++;
+    if (this.testStarted) this.assessmentService.answer(value);
   }
-  closeTest(): void { this.activeTest = null; this.testStarted = false; }
-  get resultLabel(): string {
-    const length = this.activeTest?.questions.length ?? 1;
-    return this.testScore >= length * 2 ? 'Выраженные признаки' : this.testScore >= length ? 'Умеренные признаки' : 'Минимальные признаки';
+  closeTest(): void {
+    this.assessmentService.close();
+    this.testStarted = false;
   }
+  get resultLabel(): string { return this.assessmentService.resultLabel; }
   saveResult(): void {
     const test = this.activeTest;
     if (!test || !this.testResult) return;
