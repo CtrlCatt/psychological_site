@@ -1,0 +1,11 @@
+node_modules/
+dist/
+.angular/
+coverage/
+*.log
+.DS_Store
+
+reference/
+recovered-source/
+lab1-reference.zip
+
