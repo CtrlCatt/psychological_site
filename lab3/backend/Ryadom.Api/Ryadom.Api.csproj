@@ -1,0 +1,6 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+  <ItemGroup>
+    <ProjectReference Include="../Ryadom.Application/Ryadom.Application.csproj" />
+    <ProjectReference Include="../Ryadom.Infrastructure/Ryadom.Infrastructure.csproj" />
+  </ItemGroup>
+</Project>
