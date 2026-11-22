@@ -1,0 +1,23 @@
+<main class="min-h-screen bg-[#f8f7f3] px-5 py-12 text-[#202622]">
+  <div class="mx-auto max-w-4xl">
+    <a routerLink="/account" class="text-sm font-bold text-[#416d61]">← Личный кабинет</a>
+    <h1 class="mt-6 text-3xl font-bold">Администрирование</h1>
+    <p class="mt-2 text-[#68706a]">Список пользователей. Доступно только роли Admin.</p>
+    @if (error) { <p class="mt-5 text-red-800" role="alert">{{ error }}</p> }
+    <div class="mt-7 overflow-hidden rounded-2xl bg-white shadow-sm">
+      @if (users; as page) {
+        @for (user of page.items; track user.id) {
+          <div class="flex items-center justify-between gap-4 border-b border-black/5 px-6 py-4">
+            <span class="font-semibold">{{ user.userName }}</span>
+            <span class="rounded-full bg-[#e4f0ec] px-3 py-1 text-sm text-[#416d61]">{{ user.role }}</span>
+          </div>
+        }
+        <div class="flex items-center gap-4 px-6 py-4 text-sm">
+          <span>Всего: {{ page.total }}</span>
+          @if (page.page > 1) { <button class="font-bold underline" (click)="load(page.page - 1)">Назад</button> }
+          @if (page.hasNext) { <button class="font-bold underline" (click)="load(page.page + 1)">Дальше</button> }
+        </div>
+      } @else { <p class="p-6">Загрузка пользователей…</p> }
+    </div>
+  </div>
+</main>
