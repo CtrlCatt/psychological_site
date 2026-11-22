@@ -1,0 +1,196 @@
+<main class="min-h-screen bg-[#f4f5f1] text-[#202622]">
+  <header class="border-b border-black/5 bg-white">
+    <div class="mx-auto flex h-20 max-w-7xl items-center justify-between px-5 lg:px-8">
+      <button (click)="navigateHome()" class="flex items-center gap-2.5" aria-label="Вернуться на главную">
+        <span class="flex size-9 items-center justify-center rounded-xl bg-[#416d61] text-white"><app-icon name="spark" /></span>
+        <span class="text-xl font-bold tracking-[-0.04em]">Рядом</span>
+      </button>
+      <div class="flex items-center gap-3">
+        <button (click)="helpOpen = true" class="hidden rounded-full border border-black/8 px-5 py-2.5 text-sm font-bold sm:block">Помощь</button>
+        <span class="hidden text-sm font-bold text-[#416d61] sm:inline">{{ auth.session()?.userName }}</span>
+        @if (auth.isAdmin()) { <button (click)="navigateAdmin()" class="text-sm font-bold underline">Админ</button> }
+        <button (click)="logout()" class="text-sm font-bold text-[#416d61]">Выйти</button>
+      </div>
+    </div>
+  </header>
+
+  <div class="mx-auto grid max-w-7xl gap-8 px-5 py-8 lg:grid-cols-[14rem_1fr] lg:px-8 lg:py-10">
+    <aside class="hidden lg:block">
+      <p class="px-3 text-xs font-bold uppercase tracking-[0.14em] text-[#9a9f9b]">Личный кабинет</p>
+      <nav class="mt-4 space-y-1">
+        <button (click)="scrollTo('overview')" class="flex w-full items-center gap-3 rounded-xl bg-[#e3ece8] px-3 py-3 text-left text-sm font-bold text-[#315b50]"><app-icon name="spark" /> Обзор</button>
+        <button (click)="scrollTo('account-tests')" class="flex w-full items-center gap-3 rounded-xl px-3 py-3 text-left text-sm font-semibold text-[#666d68] hover:bg-white"><app-icon name="brain" /> Все тесты</button>
+        <button (click)="scrollTo('consultation')" class="flex w-full items-center gap-3 rounded-xl px-3 py-3 text-left text-sm font-semibold text-[#666d68] hover:bg-white"><app-icon name="calendar" /> Консультации</button>
+        <button (click)="findPsychologist()" class="flex w-full items-center gap-3 rounded-xl px-3 py-3 text-left text-sm font-semibold text-[#666d68] hover:bg-white"><app-icon name="heart" /> Психологи</button>
+      </nav>
+      <button (click)="navigateHome()" class="mt-10 flex items-center gap-2 px-3 text-sm font-bold text-[#777e79]"><app-icon name="arrow" className="size-4 rotate-180" /> На главную</button>
+    </aside>
+
+    <div id="overview">
+      <section class="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
+        <div><p class="text-sm text-[#7d847f]">Ваш личный кабинет</p><h1 class="mt-1 text-3xl font-bold tracking-[-0.045em] sm:text-4xl">Личный кабинет</h1><p class="mt-2 text-[#747b76]">Как вы себя чувствуете сегодня?</p></div>
+        <button (click)="scrollTo('consultation')" class="flex items-center justify-center gap-2 rounded-full bg-[#202622] px-5 py-3 text-sm font-bold text-white"><app-icon name="calendar" className="size-4" /> Мои консультации</button>
+      </section>
+
+      <section class="mt-8 grid gap-5 md:grid-cols-[1fr_1fr]">
+        <div class="rounded-[1.75rem] bg-[#31564c] p-6 text-white sm:p-8">
+          <p class="text-xs font-bold uppercase tracking-[0.14em] text-[#adc9c0]">Опросники</p>
+          <h2 class="mt-3 text-2xl font-bold">Пройдено: {{history?.total ?? '…'}}</h2>
+          <button class="mt-5 underline" (click)="scrollTo('history')">История результатов</button>
+        </div>
+        <div id="consultation" class="rounded-[1.75rem] bg-[#ece3d9] p-6">
+          <h2 class="text-xl font-bold">Мои консультации</h2>
+          @if (bookingError) { <p class="mt-3 text-red-800" role="alert">{{bookingError}} <button class="underline" (click)="loadBookings(bookings?.page)">Повторить</button></p> }
+          @if (bookings; as page) {
+            @for (booking of page.items; track booking.id) {
+              <div class="mt-4 border-t border-black/10 pt-3">
+                <p class="font-semibold">{{booking.specialistName}}</p>
+                <p class="text-sm text-[#674b37]">{{booking.startsAt | date:'dd.MM, HH:mm'}}</p>
+                <div class="mt-2 flex gap-4 text-sm">
+                  <button class="underline" [disabled]="busy" (click)="openEdit(booking)">Перенести</button>
+                  <button class="underline" [disabled]="busy" (click)="cancelBooking(booking.id)">Отменить запись</button>
+                </div>
+              </div>
+            } @empty {
+              <p class="mt-3 text-sm">Записей пока нет.</p>
+              <button class="mt-2 font-bold underline" (click)="findPsychologist()">Выбрать психолога</button>
+            }
+            <div class="mt-4 flex gap-4 text-sm">
+              @if (page.page > 1) { <button class="underline" (click)="loadBookings(page.page - 1)">Назад</button> }
+              @if (page.hasNext) { <button class="underline" (click)="loadBookings(page.page + 1)">Дальше</button> }
+            </div>
+          } @else if (!bookingError) { <p class="mt-3" role="status">Загрузка…</p> }
+        </div>
+      </section>
+
+      <section id="account-tests" class="mt-10">
+        <div class="flex flex-col justify-between gap-3 sm:flex-row sm:items-end">
+          <div><p class="text-xs font-bold uppercase tracking-[0.14em] text-[#668478]">Углублённая оценка</p><h2 class="mt-2 text-2xl font-bold tracking-[-0.035em] sm:text-3xl">Опросники о самочувствии</h2><p class="mt-2 max-w-2xl text-sm leading-6 text-[#747b76]">Выберите опросник. Сервер подсчитает баллы и добавит результат в историю.</p></div>
+          <span class="flex w-fit items-center gap-2 rounded-full bg-white px-3 py-2 text-xs font-bold text-[#527367]"><app-icon name="shield" className="size-4" /> Учебные результаты</span>
+        </div>
+        @if (testsError) { <p class="mt-4 text-red-800" role="alert">{{testsError}} <button class="underline" (click)="loadTests(assessments?.page)">Повторить</button></p> }
+        @else if (!assessments) { <p class="mt-4" role="status">Загрузка…</p> }
+        <div class="mt-6 grid gap-4 sm:grid-cols-2">
+          @for (test of assessments?.items; track test.id; let i = $index) {
+            <article class="group rounded-[1.5rem] border border-black/6 bg-white p-6 transition hover:-translate-y-0.5 hover:shadow-[0_16px_45px_rgba(43,54,47,.08)]">
+              <div class="flex items-start justify-between">
+                <span [class]="i % 2 ? 'flex size-11 items-center justify-center rounded-2xl bg-[#f4e9df] text-[#9a6849]' : 'flex size-11 items-center justify-center rounded-2xl bg-[#e2efea] text-[#416d61]'"><app-icon [name]="i === 3 ? 'clock' : 'brain'" /></span>
+                <span class="rounded-full bg-[#f4f5f1] px-3 py-1.5 text-xs font-bold text-[#717873]">{{test.label}}</span>
+              </div>
+              <h3 class="mt-5 text-lg font-bold">{{test.title}}</h3>
+              <p class="mt-2 min-h-12 text-sm leading-6 text-[#7d847f]">{{test.description}}</p>
+              <div class="mt-5 flex items-center justify-between border-t border-black/6 pt-4">
+                <span class="flex items-center gap-1.5 text-xs text-[#8b918d]"><app-icon name="clock" className="size-4" /> {{test.time}} · {{test.questionCount}} вопросов</span>
+                <button (click)="openTest(test.id)" class="flex items-center gap-1 text-sm font-bold text-[#416d61]">Начать <app-icon name="arrow" className="size-4" /></button>
+              </div>
+            </article>
+          }
+        </div>
+        @if (assessments; as page) {
+          <div class="mt-4 flex gap-4 text-sm">
+            @if (page.page > 1) { <button class="underline" (click)="loadTests(page.page - 1)">Назад</button> }
+            @if (page.hasNext) { <button class="underline" (click)="loadTests(page.page + 1)">Ещё опросники</button> }
+          </div>
+        }
+      </section>
+
+      <section class="mt-10 grid gap-5 md:grid-cols-[1fr_.7fr]">
+        <div id="history" class="rounded-[1.5rem] bg-white p-6">
+          <h2 class="text-xl font-bold">История результатов</h2>
+          @if (historyError) { <p class="mt-3 text-red-800" role="alert">{{historyError}} <button class="underline" (click)="loadHistory(history?.page)">Повторить</button></p> }
+          @if (history; as page) {
+            <div class="mt-5 divide-y divide-black/6">
+              @for (item of page.items; track item.id) {
+                <div class="flex items-center justify-between gap-3 py-4">
+                  <div><p class="text-sm font-bold">{{item.title}}</p><p class="mt-1 text-xs text-[#747b76]">{{item.completedAt | date:'dd.MM.yyyy'}} · {{item.score}} / {{item.maximum}}</p></div>
+                  <button class="text-xs font-bold text-[#416d61] underline" [disabled]="busy" (click)="deleteResult(item.id)">Удалить</button>
+                </div>
+              } @empty { <p class="py-5 text-sm text-[#747b76]">Результатов пока нет.</p> }
+            </div>
+            <div class="mt-3 flex gap-4 text-sm">
+              @if (page.page > 1) { <button class="underline" (click)="loadHistory(page.page - 1)">Назад</button> }
+              @if (page.hasNext) { <button class="underline" (click)="loadHistory(page.page + 1)">Дальше</button> }
+            </div>
+          } @else if (!historyError) { <p class="mt-3" role="status">Загрузка…</p> }
+        </div>
+        <div class="rounded-[1.5rem] border border-[#d9cec1] bg-[#f3eee8] p-6">
+          <app-icon name="shield" className="size-7 text-[#8a694f]" />
+          <h2 class="mt-4 text-lg font-bold">Важно помнить</h2>
+          <p class="mt-2 text-sm leading-6 text-[#74695f]">Опросники не ставят диагноз и не заменяют консультацию врача. Их задача — помочь заметить изменения и обсудить их со специалистом. Подсчёт баллов в учебной версии упрощён и не является клинической интерпретацией.</p>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  @if (testOpen) {
+    <div class="fixed inset-0 z-50 flex items-end justify-center bg-[#15201c]/60 backdrop-blur-sm sm:items-center sm:p-5" role="dialog" aria-modal="true" aria-label="Опросник">
+      <div class="max-h-[94vh] w-full max-w-2xl overflow-y-auto rounded-t-[2rem] bg-white p-6 shadow-2xl sm:rounded-[2rem] sm:p-8">
+        <div class="flex items-center justify-between">
+          <span class="text-sm font-bold text-[#416d61]">{{test.assessment?.title ?? 'Опросник'}}</span>
+          <button (click)="closeTest()" [disabled]="test.loading || test.submitting" class="rounded-full bg-[#f3f3f0] p-2" aria-label="Закрыть"><app-icon name="x" /></button>
+        </div>
+        @if (test.loading) { <p class="mt-4" role="status">Загрузка…</p> }
+        @if (test.error) { <p class="mt-4 text-red-800" role="alert">{{test.error}}</p> }
+        @if (test.assessment; as survey) {
+          @if (!testStarted) {
+            <h2 class="mt-6 text-3xl font-bold">{{survey.title}}</h2>
+            <p class="mt-3 text-[#707772]">{{survey.description}}</p>
+            <p class="mt-5 rounded-2xl bg-[#f4f5f1] p-4 text-sm">{{survey.questions.length}} вопросов · {{survey.time}}</p>
+            <button (click)="testStarted = true" class="mt-6 w-full rounded-full bg-[#416d61] px-6 py-4 font-bold text-white">Начать тестирование</button>
+          } @else if (test.result; as result) {
+            <h2 class="mt-6 text-3xl font-bold">{{result.note}} · {{result.score}} из {{result.maximum}}</h2>
+            <p class="mt-4 text-[#707772]">Учебный результат добавлен в историю.</p>
+            @if (result.needsSupport) {
+              <p class="mt-4 rounded-2xl bg-[#fbefec] p-4 text-[#7d3f35]" role="alert">Если есть непосредственный риск причинить себе вред, обратитесь в местную экстренную службу.</p>
+            }
+            <button (click)="closeTest()" class="mt-6 rounded-full bg-[#416d61] px-6 py-4 font-bold text-white">Готово</button>
+          } @else if (test.readyToSubmit) {
+            <h2 class="mt-6 text-2xl font-bold">Все вопросы пройдены</h2>
+            <p class="mt-3 text-sm text-[#68706a]">Ответы будут отправлены в API для подсчёта баллов.</p>
+            <button (click)="submit()" [disabled]="test.submitting" class="mt-6 rounded-full bg-[#416d61] px-6 py-4 font-bold text-white disabled:opacity-50">{{test.submitting ? 'Отправляем…' : 'Получить результат'}}</button>
+          } @else {
+            <p class="mt-5 text-sm text-[#68706a]">Вопрос {{test.index + 1}} из {{survey.questions.length}}</p>
+            <div class="mt-2 h-1.5 overflow-hidden rounded-full bg-[#edf0ed]"><div class="h-full rounded-full bg-[#70a393]" [style.width.%]="((test.index + 1) / survey.questions.length) * 100"></div></div>
+            <h2 class="mt-6 text-2xl font-bold">{{survey.questions[test.index].text}}</h2>
+            <div class="mt-7 grid gap-3">
+              @for (label of survey.options; track $index) {
+                <button (click)="test.answer($index)" class="rounded-2xl border border-black/8 p-4 text-left font-semibold hover:border-[#70a393] hover:bg-[#f2f7f5]">{{label}}</button>
+              }
+            </div>
+          }
+        }
+      </div>
+    </div>
+  }
+
+  @if (editing) {
+    <div class="fixed inset-0 z-50 flex items-center justify-center bg-[#15201c]/55 p-5" role="dialog" aria-modal="true" aria-label="Перенос записи">
+      <div class="w-full max-w-md rounded-3xl bg-white p-7">
+        <div class="flex items-center justify-between"><h2 class="text-xl font-bold">Перенос записи</h2><button (click)="editing = null" [disabled]="busy" aria-label="Закрыть"><app-icon name="x" /></button></div>
+        <p class="mt-3 text-sm">{{editing.specialistName}}</p>
+        @if (editError) { <p class="mt-4 text-red-800" role="alert">{{editError}} <button class="underline" (click)="loadSlots(slots?.page)" [disabled]="busy">Обновить</button></p> }
+        @if (slots; as page) {
+          <div class="mt-4 grid grid-cols-3 gap-2">
+            @for (slot of page.items; track slot.id) {
+              <button class="rounded-xl border border-black/10 p-2 text-sm hover:border-[#416d61]" [disabled]="busy" (click)="reschedule(slot.id)">{{slot.startsAt | date:'dd.MM, HH:mm'}}</button>
+            } @empty { <p class="col-span-3 text-sm">Свободных слотов нет.</p> }
+          </div>
+          <div class="mt-4 flex gap-4 text-sm">
+            @if (page.page > 1) { <button class="underline" [disabled]="busy" (click)="loadSlots(page.page - 1)">Назад</button> }
+            @if (page.hasNext) { <button class="underline" [disabled]="busy" (click)="loadSlots(page.page + 1)">Ещё время</button> }
+          </div>
+        } @else if (busy) { <p class="mt-3" role="status">Загрузка…</p> }
+      </div>
+    </div>
+  }
+
+  @if (helpOpen) {
+    <div class="fixed inset-0 z-50 flex items-center justify-center bg-[#15201c]/55 p-5" role="dialog" aria-modal="true" aria-label="Помощь">
+      <div class="w-full max-w-md rounded-3xl bg-white p-7">
+        <h2 class="text-xl font-bold">Помощь</h2>
+        <p class="mt-4 text-sm text-[#747b76]">Пройдите опросник, чтобы увидеть баллы в истории. Запись можно перенести или отменить в разделе «Мои консультации».</p>
+        <button (click)="helpOpen = false" class="mt-6 rounded-full bg-[#416d61] px-6 py-3 text-white">Понятно</button>
+      </div>
+    </div>
+  }
+</main>
