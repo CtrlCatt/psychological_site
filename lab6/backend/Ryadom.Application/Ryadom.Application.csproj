@@ -1,0 +1,5 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <ProjectReference Include="../Ryadom.Domain/Ryadom.Domain.csproj" />
+  </ItemGroup>
+</Project>
